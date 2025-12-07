@@ -87,11 +87,71 @@
 </head>
 <body>
   <h1>Race Ranking</h1>
-  <div class="nav">
-    <a href="index.html">Results</a>
-    <a href="input.html">Add Race</a>
-  </div>
 
+<div class="section">
+  <h2>INPUT</h2>
+  <form id="race-form">
+    <label for="date">Date (dd/mm/yyyy)</label>
+    <input
+      type="text"
+      id="date"
+      name="date"
+      required
+      placeholder="dd/mm/yyyy"
+    />
+
+    <label for="eventName">Event Name</label>
+    <input
+      type="text"
+      id="eventName"
+      name="eventName"
+      required
+    />
+
+    <label for="city">City</label>
+    <input
+      type="text"
+      id="city"
+      name="city"
+      required
+    />
+
+    <label for="country">Country</label>
+    <input
+      type="text"
+      id="country"
+      name="country"
+      required
+    />
+
+    <label for="distance">Distance</label>
+    <select id="distance" name="distance" required>
+      <option value="">-- Select --</option>
+      <option value="5k">5k</option>
+      <option value="10k">10k</option>
+      <option value="HM">HM</option>
+      <option value="M">M</option>
+    </select>
+
+    <label for="time">Time (hh:mm:ss)</label>
+    <input
+      type="text"
+      id="time"
+      name="time"
+      required
+      placeholder="hh:mm:ss"
+    />
+
+    <div class="full-width">
+      <button type="submit" id="save-btn">Save</button>
+    </div>
+
+    <div id="message" class="full-width"></div>
+  </form>
+</div>
+
+
+  
   <div class="section">
     <h2>RESULTS</h2>
     <table>
@@ -119,6 +179,84 @@
   </div>
 
   <script>
+
+// ---------------- INPUT FORM HANDLING ----------------
+
+const messageDiv = document.getElementById('message');
+const saveBtn = document.getElementById('save-btn');
+
+function showMessage(text, isError = false) {
+  if (!messageDiv) return;
+  messageDiv.textContent = text;
+  messageDiv.style.color = isError ? 'red' : 'green';
+}
+
+function clearMessage() {
+  if (!messageDiv) return;
+  messageDiv.textContent = '';
+}
+
+async function handleSubmit(e) {
+  e.preventDefault();
+  clearMessage();
+
+  const date = document.getElementById('date').value.trim();
+  const eventName = document.getElementById('eventName').value.trim();
+  const city = document.getElementById('city').value.trim();
+  const country = document.getElementById('country').value.trim();
+  const distance = document.getElementById('distance').value;
+  const time = document.getElementById('time').value.trim();
+
+  const payload = {
+    date,
+    event_name: eventName,
+    city,
+    country,
+    distance_label: distance,
+    time_str: time
+  };
+
+  console.log('Saving race payload:', payload);
+
+  if (saveBtn) saveBtn.disabled = true;
+
+  try {
+    const response = await fetch(`${API_BASE}/api/races`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData.error || 'Failed to save race.');
+    }
+
+    showMessage('Race saved successfully!');
+    
+    // limpa o form
+    document.getElementById('race-form').reset();
+    document.getElementById('distance').value = '';
+
+    // recarrega tabela após salvar
+    loadRaces();
+
+  } catch (err) {
+    showMessage(err.message, true);
+    console.error(err);
+  } finally {
+    if (saveBtn) saveBtn.disabled = false;
+  }
+}
+
+// Se existir formulário no HTML, ativa ele
+const form = document.getElementById('race-form');
+if (form) {
+  form.addEventListener('submit', handleSubmit);
+}
+
+
+    
     // TROQUE ESTA URL pela URL real do backend no Render/Railway
     const API_BASE = "https://race-ranking-v0-backend.onrender.com";
 
