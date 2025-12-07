@@ -38,6 +38,30 @@
       border-bottom: 1px solid #eee;
       padding-bottom: 10px;
     }
+        .actions-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 6px 12px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-export {
+      background: #2e7d32;
+      color: #fff;
+    }
+
+    .btn-export:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -88,6 +112,9 @@
         <!-- Filled dynamically -->
       </tbody>
     </table>
+        <div class="actions-bar">
+      <button id="export-btn" class="btn btn-export">Export XLS</button>
+    </div>
   </div>
 
   <script>
@@ -95,6 +122,8 @@
     const API_BASE = "https://race-ranking-v0-backend.onrender.com";
 
     const resultsBody = document.getElementById('results-body');
+    const exportBtn = document.getElementById('export-btn');
+
 
     function timeStrToSeconds(timeStr) {
       const parts = timeStr.split(':');
@@ -130,6 +159,96 @@
       return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
     }
 
+async function exportToXls() {
+  if (!exportBtn) return;
+
+  exportBtn.disabled = true;
+  exportBtn.textContent = "Exporting...";
+
+  try {
+    const response = await fetch(`${API_BASE}/api/races`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch races for export");
+    }
+    const data = await response.json();
+
+    if (!data || data.length === 0) {
+      alert("No races to export.");
+      return;
+    }
+
+    // Cabeçalho
+    const header = [
+      "Date",
+      "Event Name",
+      "City",
+      "Country",
+      "Distance",
+      "Time",
+      "Pace (min/km)"
+    ];
+
+    const rows = [];
+    rows.push(header);
+
+    data.forEach(race => {
+      const pace = paceFrom(race.time_str, race.distance_label) || "";
+      rows.push([
+        race.date,
+        race.event_name,
+        race.city,
+        race.country,
+        race.distance_label,
+        race.time_str,
+        pace
+      ]);
+    });
+
+    // Monta CSV (usando ; como separador, fica bem pra Excel em PT-BR também)
+    const lines = rows.map(cols =>
+      cols
+        .map(value => {
+          const v = value == null ? "" : String(value);
+          // escapa aspas e separador
+          const escaped = v.replace(/"/g, '""');
+          return `"${escaped}"`;
+        })
+        .join(";")
+    );
+
+    const csvContent = lines.join("\r\n");
+
+    const blob = new Blob([csvContent], {
+      type: "application/vnd.ms-excel;charset=utf-8;"
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, "0");
+    const dd = String(now.getDate()).padStart(2, "0");
+    const hh = String(now.getHours()).padStart(2, "0");
+    const min = String(now.getMinutes()).padStart(2, "0");
+
+    a.href = url;
+    a.download = `race-ranking-${yyyy}${mm}${dd}-${hh}${min}.xls`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error("Error exporting XLS:", err);
+    alert("Error exporting XLS. See console for details.");
+  } finally {
+    exportBtn.disabled = false;
+    exportBtn.textContent = "Export XLS";
+  }
+}
+
+
+    
     async function loadRaces() {
       resultsBody.innerHTML =
         '<tr><td colspan="7" class="center">Loading...</td></tr>';
@@ -199,6 +318,11 @@
 
     loadRaces();
 
+if (exportBtn) {
+  exportBtn.addEventListener("click", exportToXls);
+}
+
+    
 async function deleteRace(id) {
   const pwd = prompt("Digite a senha para excluir (hint: 333):");
   if (pwd === null) {
