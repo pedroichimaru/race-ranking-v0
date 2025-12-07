@@ -2,43 +2,130 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Race Ranking - Results</title>
+  <title>Race Ranking</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 20px;
-      background: #c7b9b9;
+      background: #f5f5f5;
     }
+
     h1 {
       text-align: center;
       margin-bottom: 10px;
     }
+
     .nav {
       text-align: center;
       margin-bottom: 20px;
     }
+
     .nav a {
       margin: 0 10px;
       text-decoration: none;
       color: #1976d2;
       font-weight: bold;
     }
+
+    /* ----- FORM SECTION (INPUT) ----- */
+
     .section {
       background: #ffffff;
       border-radius: 8px;
       padding: 20px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.08);
       max-width: 1000px;
-      margin: 0 auto;
+      margin: 0 auto 30px auto;
     }
+
     .section h2 {
       margin-top: 0;
       border-bottom: 1px solid #eee;
       padding-bottom: 10px;
     }
-        .actions-bar {
+
+    #race-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 20px;
+      align-items: center;
+    }
+
+    #race-form label {
+      font-weight: bold;
+    }
+
+    #race-form input[type="text"],
+    #race-form select {
+      padding: 6px 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    #save-btn {
+      padding: 8px 14px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      background: #1976d2;
+      color: white;
+      font-weight: bold;
+    }
+
+    #save-btn:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+
+    #message {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      grid-column: 1 / -1;
+    }
+
+    .section form {
+      margin-bottom: 10px;
+    }
+
+    /* ----- RESULTS TABLE ----- */
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 6px 8px;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      background: #f0f0f0;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #fafafa;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    /* ----- ACTIONS BAR & BUTTONS ----- */
+
+    .actions-bar {
       display: flex;
       justify-content: flex-end;
       margin-bottom: 10px;
@@ -62,273 +149,124 @@
       opacity: 0.6;
       cursor: default;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 0.9rem;
+
+    .btn-delete {
+      background: #d32f2f;
+      color: #fff;
     }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 6px 8px;
-      text-align: left;
-      white-space: nowrap;
-    }
-    th {
-      background: #f0f0f0;
-    }
-    tbody tr:nth-child(even) {
-      background: #fafafa;
-    }
-    .center {
-      text-align: center;
-    }
-    /* ----- FORM SECTION (INPUT) ----- */
-
-.section {
-  background: #ffffff;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  max-width: 1000px;
-  margin: 0 auto 30px auto; /* espaço abaixo para separar do RESULTS */
-}
-
-.section h2 {
-  margin-top: 0;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
-}
-
-/* Form grid como no input.html */
-#race-form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px 20px;
-  align-items: center;
-}
-
-#race-form label {
-  font-weight: bold;
-}
-
-#race-form input[type="text"],
-#race-form select {
-  padding: 6px 8px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.full-width {
-  grid-column: 1 / -1;
-}
-
-#save-btn {
-  padding: 8px 14px;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  background: #1976d2;
-  color: white;
-  font-weight: bold;
-}
-
-#save-btn:disabled {
-  opacity: 0.6;
-  cursor: default;
-}
-
-#message {
-  margin-top: 10px;
-  font-size: 0.9rem;
-  grid-column: 1 / -1;
-}
-
-/* Ajuste extra para manter visual harmonioso */
-.section form {
-  margin-bottom: 10px;
-}
-
   </style>
 </head>
 <body>
   <h1>Race Ranking</h1>
 
-<div class="section">
-  <h2>INPUT</h2>
-  <form id="race-form">
-    <label for="date">Date (dd/mm/yyyy)</label>
-    <input
-      type="text"
-      id="date"
-      name="date"
-      required
-      placeholder="dd/mm/yyyy"
-    />
+  <div class="nav">
+    <!-- links “fakes” só pra estética, já que tudo está na mesma página -->
+    <a href="#input-section">Input</a>
+    <a href="#results-section">Results</a>
+  </div>
 
-    <label for="eventName">Event Name</label>
-    <input
-      type="text"
-      id="eventName"
-      name="eventName"
-      required
-    />
+  <!-- ============= INPUT SECTION ============= -->
+  <div class="section" id="input-section">
+    <h2>INPUT</h2>
+    <form id="race-form">
+      <label for="date">Date (dd/mm/yyyy)</label>
+      <input
+        type="text"
+        id="date"
+        name="date"
+        required
+        placeholder="dd/mm/yyyy"
+      />
 
-    <label for="city">City</label>
-    <input
-      type="text"
-      id="city"
-      name="city"
-      required
-    />
+      <label for="eventName">Event Name</label>
+      <input
+        type="text"
+        id="eventName"
+        name="eventName"
+        required
+      />
 
-    <label for="country">Country</label>
-    <input
-      type="text"
-      id="country"
-      name="country"
-      required
-    />
+      <label for="city">City</label>
+      <input
+        type="text"
+        id="city"
+        name="city"
+        required
+      />
 
-    <label for="distance">Distance</label>
-    <select id="distance" name="distance" required>
-      <option value="">-- Select --</option>
-      <option value="5k">5k</option>
-      <option value="10k">10k</option>
-      <option value="HM">HM</option>
-      <option value="M">M</option>
-    </select>
+      <label for="country">Country</label>
+      <input
+        type="text"
+        id="country"
+        name="country"
+        required
+      />
 
-    <label for="time">Time (hh:mm:ss)</label>
-    <input
-      type="text"
-      id="time"
-      name="time"
-      required
-      placeholder="hh:mm:ss"
-    />
+      <label for="distance">Distance</label>
+      <select id="distance" name="distance" required>
+        <option value="">-- Select --</option>
+        <option value="5k">5k</option>
+        <option value="10k">10k</option>
+        <option value="HM">HM</option>
+        <option value="M">M</option>
+      </select>
 
-    <div class="full-width">
-      <button type="submit" id="save-btn">Save</button>
+      <label for="time">Time (hh:mm:ss)</label>
+      <input
+        type="text"
+        id="time"
+        name="time"
+        required
+        placeholder="hh:mm:ss"
+      />
+
+      <div class="full-width">
+        <button type="submit" id="save-btn">Save</button>
+      </div>
+
+      <div id="message" class="full-width"></div>
+    </form>
+  </div>
+
+  <!-- ============= RESULTS SECTION ============= -->
+  <div class="section" id="results-section">
+    <h2>RESULTS</h2>
+
+    <div class="actions-bar">
+      <button id="export-btn" class="btn btn-export">Export XLS</button>
     </div>
 
-    <div id="message" class="full-width"></div>
-  </form>
-</div>
-  
-  <div class="section">
-    <h2>RESULTS</h2>
     <table>
-<thead>
-  <tr>
-    <th>Date</th>
-    <th>Event Name</th>
-    <th>City</th>
-    <th>Country</th>
-    <th>Distance</th>
-    <th>Time</th>
-    <th>Pace (min/km)</th>
-    <th>Actions</th>
-  </tr>
-</thead>
-
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Event Name</th>
+          <th>City</th>
+          <th>Country</th>
+          <th>Distance</th>
+          <th>Time</th>
+          <th>Pace (min/km)</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
       <tbody id="results-body">
         <!-- Filled dynamically -->
       </tbody>
     </table>
-    <br>
-        <div class="actions-bar">
-      <button id="export-btn" class="btn btn-export">Export CSV</button>
-    </div>
   </div>
 
   <script>
-
-// ---------------- INPUT FORM HANDLING ----------------
-
-const messageDiv = document.getElementById('message');
-const saveBtn = document.getElementById('save-btn');
-
-function showMessage(text, isError = false) {
-  if (!messageDiv) return;
-  messageDiv.textContent = text;
-  messageDiv.style.color = isError ? 'red' : 'green';
-}
-
-function clearMessage() {
-  if (!messageDiv) return;
-  messageDiv.textContent = '';
-}
-
-async function handleSubmit(e) {
-  e.preventDefault();
-  clearMessage();
-
-  const date = document.getElementById('date').value.trim();
-  const eventName = document.getElementById('eventName').value.trim();
-  const city = document.getElementById('city').value.trim();
-  const country = document.getElementById('country').value.trim();
-  const distance = document.getElementById('distance').value;
-  const time = document.getElementById('time').value.trim();
-
-  const payload = {
-    date,
-    event_name: eventName,
-    city,
-    country,
-    distance_label: distance,
-    time_str: time
-  };
-
-  console.log('Saving race payload:', payload);
-
-  if (saveBtn) saveBtn.disabled = true;
-
-  try {
-    const response = await fetch(`${API_BASE}/api/races`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-
-    if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
-      throw new Error(errData.error || 'Failed to save race.');
-    }
-
-    showMessage('Race saved successfully!');
-    
-    // limpa o form
-    document.getElementById('race-form').reset();
-    document.getElementById('distance').value = '';
-
-    // recarrega tabela após salvar
-    loadRaces();
-
-  } catch (err) {
-    showMessage(err.message, true);
-    console.error(err);
-  } finally {
-    if (saveBtn) saveBtn.disabled = false;
-  }
-}
-
-// Se existir formulário no HTML, ativa ele
-const form = document.getElementById('race-form');
-if (form) {
-  form.addEventListener('submit', handleSubmit);
-}
-
-
-    
-    // TROQUE ESTA URL pela URL real do backend no Render/Railway
+    // >>>>> TROCAR AQUI PELA SUA URL DO RENDER (sempre https!)
     const API_BASE = "https://race-ranking-v0-backend.onrender.com";
 
+    // ----- ELEMENTOS DOM -----
     const resultsBody = document.getElementById('results-body');
     const exportBtn = document.getElementById('export-btn');
+    const messageDiv = document.getElementById('message');
+    const saveBtn = document.getElementById('save-btn');
+    const form = document.getElementById('race-form');
 
+    // ----- FUNÇÕES DE PACE -----
 
     function timeStrToSeconds(timeStr) {
       const parts = timeStr.split(':');
@@ -364,99 +302,24 @@ if (form) {
       return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
     }
 
-async function exportToCsv() {
-  if (!exportBtn) return;
+    // ----- MENSAGENS FORM -----
 
-  exportBtn.disabled = true;
-  exportBtn.textContent = "Exporting...";
-
-  try {
-    const response = await fetch(`${API_BASE}/api/races`);
-    if (!response.ok) {
-      throw new Error("Failed to fetch races for export");
-    }
-    const data = await response.json();
-
-    if (!data || data.length === 0) {
-      alert("No races to export.");
-      return;
+    function showMessage(text, isError = false) {
+      if (!messageDiv) return;
+      messageDiv.textContent = text;
+      messageDiv.style.color = isError ? 'red' : 'green';
     }
 
-    // Cabeçalho
-    const header = [
-      "Date",
-      "Event Name",
-      "City",
-      "Country",
-      "Distance",
-      "Time",
-      "Pace (min/km)"
-    ];
+    function clearMessage() {
+      if (!messageDiv) return;
+      messageDiv.textContent = '';
+    }
 
-    const rows = [];
-    rows.push(header);
+    // ----- CARREGAR CORRIDAS -----
 
-    data.forEach(race => {
-      const pace = paceFrom(race.time_str, race.distance_label) || "";
-      rows.push([
-        race.date,
-        race.event_name,
-        race.city,
-        race.country,
-        race.distance_label,
-        race.time_str,
-        pace
-      ]);
-    });
-
-    // Monta CSV (usando ; como separador, fica bem pra Excel em PT-BR também)
-    const lines = rows.map(cols =>
-      cols
-        .map(value => {
-          const v = value == null ? "" : String(value);
-          // escapa aspas e separador
-          const escaped = v.replace(/"/g, '""');
-          return `"${escaped}"`;
-        })
-        .join(";")
-    );
-
-    const csvContent = lines.join("\r\n");
-
-    const blob = new Blob([csvContent], {
-      type: "application/vnd.ms-excel;charset=utf-8;"
-    });
-
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    const now = new Date();
-    const yyyy = now.getFullYear();
-    const mm = String(now.getMonth() + 1).padStart(2, "0");
-    const dd = String(now.getDate()).padStart(2, "0");
-    const hh = String(now.getHours()).padStart(2, "0");
-    const min = String(now.getMinutes()).padStart(2, "0");
-
-    a.href = url;
-    a.download = `race-ranking-${yyyy}${mm}${dd}-${hh}${min}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  } catch (err) {
-    console.error("Error exporting CSV:", err);
-    alert("Error exporting CSV. See console for details.");
-  } finally {
-    exportBtn.disabled = false;
-    exportBtn.textContent = "Export CSV";
-  }
-}
-
-
-    
     async function loadRaces() {
       resultsBody.innerHTML =
-        '<tr><td colspan="7" class="center">Loading...</td></tr>';
+        '<tr><td colspan="8" class="center">Loading...</td></tr>';
       try {
         const response = await fetch(`${API_BASE}/api/races`);
         console.log('GET /api/races status:', response.status);
@@ -468,7 +331,7 @@ async function exportToCsv() {
         resultsBody.innerHTML = '';
         if (!data || data.length === 0) {
           resultsBody.innerHTML =
-            '<tr><td colspan="7" class="center">No races saved yet.</td></tr>';
+            '<tr><td colspan="8" class="center">No races saved yet.</td></tr>';
           return;
         }
 
@@ -504,10 +367,11 @@ async function exportToCsv() {
           tdPace.textContent = pace || '-';
           tr.appendChild(tdPace);
 
+          // coluna de ações: Delete
           const tdActions = document.createElement('td');
           const btnDelete = document.createElement('button');
           btnDelete.textContent = 'Delete';
-          btnDelete.style.cursor = 'pointer';
+          btnDelete.className = 'btn btn-delete';
           btnDelete.onclick = () => deleteRace(race.id);
           tdActions.appendChild(btnDelete);
           tr.appendChild(tdActions);
@@ -516,52 +380,190 @@ async function exportToCsv() {
         });
       } catch (err) {
         resultsBody.innerHTML =
-          '<tr><td colspan="7" class="center">Error loading races.</td></tr>';
+          '<tr><td colspan="8" class="center">Error loading races.</td></tr>';
         console.error('Error in loadRaces:', err);
       }
     }
 
-    loadRaces();
+    // ----- DELETE -----
 
-if (exportBtn) {
-  exportBtn.addEventListener("click", exportToCsv);
-}
+    async function deleteRace(id) {
+      const pwd = prompt("Digite a senha para excluir (hint: 333):");
+      if (pwd === null) return;
+      if (!pwd.trim()) {
+        alert("Senha vazia.");
+        return;
+      }
 
-    
-async function deleteRace(id) {
-  const pwd = prompt("Digite a senha para excluir (hint: 333):");
-  if (pwd === null) {
-    // usuário cancelou
-    return;
-  }
+      try {
+        const response = await fetch(`${API_BASE}/api/races/${id}/delete`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: pwd.trim() }),
+        });
 
-  if (!pwd.trim()) {
-    alert("Senha vazia.");
-    return;
-  }
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          alert(errData.error || "Erro ao excluir corrida.");
+          return;
+        }
 
-  try {
-    const response = await fetch(`${API_BASE}/api/races/${id}/delete`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password: pwd.trim() }),
-    });
-
-    if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
-      alert(errData.error || "Erro ao excluir corrida.");
-      return;
+        await loadRaces();
+      } catch (err) {
+        console.error("Erro ao excluir corrida:", err);
+        alert("Erro ao excluir corrida (ver console).");
+      }
     }
 
-    // sucesso
-    await loadRaces();
-  } catch (err) {
-    console.error("Erro ao excluir corrida:", err);
-    alert("Erro ao excluir corrida (ver console).");
-  }
-}
+    // ----- EXPORT XLS -----
 
-    
+    async function exportToXls() {
+      if (!exportBtn) return;
+
+      exportBtn.disabled = true;
+      exportBtn.textContent = "Exporting...";
+
+      try {
+        const response = await fetch(`${API_BASE}/api/races`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch races for export");
+        }
+        const data = await response.json();
+
+        if (!data || data.length === 0) {
+          alert("No races to export.");
+          return;
+        }
+
+        const header = [
+          "Date",
+          "Event Name",
+          "City",
+          "Country",
+          "Distance",
+          "Time",
+          "Pace (min/km)"
+        ];
+
+        const rows = [];
+        rows.push(header);
+
+        data.forEach(race => {
+          const pace = paceFrom(race.time_str, race.distance_label) || "";
+          rows.push([
+            race.date,
+            race.event_name,
+            race.city,
+            race.country,
+            race.distance_label,
+            race.time_str,
+            pace
+          ]);
+        });
+
+        const lines = rows.map(cols =>
+          cols
+            .map(value => {
+              const v = value == null ? "" : String(value);
+              const escaped = v.replace(/"/g, '""');
+              return `"${escaped}"`;
+            })
+            .join(";")
+        );
+
+        const csvContent = lines.join("\r\n");
+
+        const blob = new Blob([csvContent], {
+          type: "application/vnd.ms-excel;charset=utf-8;"
+        });
+
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, "0");
+        const dd = String(now.getDate()).padStart(2, "0");
+        const hh = String(now.getHours()).padStart(2, "0");
+        const min = String(now.getMinutes()).padStart(2, "0");
+
+        a.href = url;
+        a.download = `race-ranking-${yyyy}${mm}${dd}-${hh}${min}.xls`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        console.error("Error exporting XLS:", err);
+        alert("Error exporting XLS. See console for details.");
+      } finally {
+        exportBtn.disabled = false;
+        exportBtn.textContent = "Export XLS";
+      }
+    }
+
+    // ----- FORM SUBMIT (INPUT) -----
+
+    async function handleSubmit(e) {
+      e.preventDefault();
+      clearMessage();
+
+      const date = document.getElementById('date').value.trim();
+      const eventName = document.getElementById('eventName').value.trim();
+      const city = document.getElementById('city').value.trim();
+      const country = document.getElementById('country').value.trim();
+      const distance = document.getElementById('distance').value;
+      const time = document.getElementById('time').value.trim();
+
+      const payload = {
+        date,
+        event_name: eventName,
+        city,
+        country,
+        distance_label: distance,
+        time_str: time
+      };
+
+      console.log('Saving race payload:', payload);
+
+      if (saveBtn) saveBtn.disabled = true;
+
+      try {
+        const response = await fetch(`${API_BASE}/api/races`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(errData.error || 'Failed to save race.');
+        }
+
+        showMessage('Race saved successfully!');
+        form.reset();
+        document.getElementById('distance').value = '';
+
+        await loadRaces();
+      } catch (err) {
+        showMessage(err.message, true);
+        console.error(err);
+      } finally {
+        if (saveBtn) saveBtn.disabled = false;
+      }
+    }
+
+    // ----- EVENT LISTENERS & INITIAL LOAD -----
+
+    if (form) {
+      form.addEventListener('submit', handleSubmit);
+    }
+
+    if (exportBtn) {
+      exportBtn.addEventListener("click", exportToXls);
+    }
+
+    loadRaces();
   </script>
 </body>
 </html>
