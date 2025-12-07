@@ -109,6 +109,29 @@ def list_races():
     print("GET /api/races ->", result)
     return jsonify(result), 200
 
+@app.route("/api/races/<int:race_id>/delete", methods=["POST"])
+def delete_race(race_id):
+    data = request.get_json(force=True, silent=True) or {}
+    password = data.get("password")
+
+    # senha simples, só para seu uso pessoal
+    if password != "333":
+        return jsonify({"error": "Invalid password"}), 403
+
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+    cur.execute("DELETE FROM races WHERE id = ?", (race_id,))
+    changes = cur.rowcount
+    conn.commit()
+    conn.close()
+
+    if changes == 0:
+        return jsonify({"error": "Race not found"}), 404
+
+    print(f"Race {race_id} deleted")
+    return jsonify({"status": "deleted", "id": race_id}), 200
+
+
 
 if __name__ == "__main__":
     # para rodar localmente, se você quiser testar:
