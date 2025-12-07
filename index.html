@@ -114,7 +114,7 @@
     </table>
     <br>
         <div class="actions-bar">
-      <button id="export-btn" class="btn btn-export">Export XLSX</button>
+      <button id="export-btn" class="btn btn-export">Export CSV</button>
     </div>
   </div>
 
@@ -160,7 +160,7 @@
       return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
     }
 
-async function exportToXlsx() {
+async function exportToCsv() {
   if (!exportBtn) return;
 
   exportBtn.disabled = true;
@@ -234,17 +234,17 @@ async function exportToXlsx() {
     const min = String(now.getMinutes()).padStart(2, "0");
 
     a.href = url;
-    a.download = `race-ranking-${yyyy}${mm}${dd}-${hh}${min}.xlsx`;
+    a.download = `race-ranking-${yyyy}${mm}${dd}-${hh}${min}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   } catch (err) {
-    console.error("Error exporting XLSX:", err);
-    alert("Error exporting XLSX. See console for details.");
+    console.error("Error exporting CSV:", err);
+    alert("Error exporting CSV. See console for details.");
   } finally {
     exportBtn.disabled = false;
-    exportBtn.textContent = "Export XLSX";
+    exportBtn.textContent = "Export CSV";
   }
 }
 
@@ -320,7 +320,7 @@ async function exportToXlsx() {
     loadRaces();
 
 if (exportBtn) {
-  exportBtn.addEventListener("click", exportToXlsx);
+  exportBtn.addEventListener("click", exportToCsv);
 }
 
     
