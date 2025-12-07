@@ -109,3 +109,6 @@ if __name__ == "__main__":
     # Para rodar localmente, se quiser:
     init_db()
     app.run(debug=True)
+else:
+    # Quando o gunicorn importar "app", ele vai cair aqui
+    init_db()
