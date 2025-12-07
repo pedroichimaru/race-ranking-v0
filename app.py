@@ -29,7 +29,7 @@ def init_db():
     print("DB initialized at", DB_PATH)
 
 
-# chama sempre que o módulo for importado (local ou Render)
+# inicializa o banco toda vez que o app for importado
 init_db()
 
 
@@ -37,7 +37,7 @@ init_db()
 def add_cors_headers(response):
     response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"]
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
     return response
 
 
@@ -111,5 +111,5 @@ def list_races():
 
 
 if __name__ == "__main__":
-    # para rodar localmente
+    # para rodar localmente, se você quiser testar:
     app.run(debug=True)
