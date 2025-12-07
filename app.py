@@ -26,20 +26,28 @@ def init_db():
     )
     conn.commit()
     conn.close()
+    print("DB initialized at", DB_PATH)
+
+
+# chama sempre que o módulo for importado (local ou Render)
+init_db()
 
 
 @app.after_request
 def add_cors_headers(response):
-    # CORS simples pra permitir o GitHub Pages chamar a API
     response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"]
     return response
+
+
+@app.route("/")
+def health():
+    return jsonify({"status": "ok", "message": "Race API is running"})
 
 
 @app.route("/api/races", methods=["OPTIONS"])
 def races_options():
-    # Resposta pro preflight CORS
     return ("", 204)
 
 
@@ -102,13 +110,6 @@ def list_races():
     return jsonify(result), 200
 
 
-# Importante: sem app.run() aqui.
-# O servidor (gunicorn, etc.) vai usar o objeto "app" diretamente.
-
 if __name__ == "__main__":
-    # Para rodar localmente, se quiser:
-    init_db()
+    # para rodar localmente
     app.run(debug=True)
-else:
-    # Quando o gunicorn importar "app", ele vai cair aqui
-    init_db()
