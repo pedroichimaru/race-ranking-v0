@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Race Ranking - Results</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .nav {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .nav a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #1976d2;
+      font-weight: bold;
+    }
+    .section {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .section h2 {
+      margin-top: 0;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 6px 8px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    th {
+      background: #f0f0f0;
+    }
+    tbody tr:nth-child(even) {
+      background: #fafafa;
+    }
+    .center {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Race Ranking</h1>
+  <div class="nav">
+    <a href="index.html">Results</a>
+    <a href="input.html">Add Race</a>
+  </div>
+
+  <div class="section">
+    <h2>RESULTS</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Event Name</th>
+          <th>City</th>
+          <th>Country</th>
+          <th>Distance</th>
+          <th>Time</th>
+          <th>Pace (min/km)</th>
+        </tr>
+      </thead>
+      <tbody id="results-body">
+        <!-- Filled dynamically -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // TROQUE ESTA URL pela URL real do backend no Render/Railway
+    const API_BASE = "https://SUA-API-AQUI.onrender.com";
+
+    const resultsBody = document.getElementById('results-body');
+
+    function timeStrToSeconds(timeStr) {
+      const parts = timeStr.split(':');
+      if (parts.length !== 3) return null;
+      const [h, m, s] = parts.map(Number);
+      if (
+        Number.isNaN(h) || Number.isNaN(m) || Number.isNaN(s) ||
+        m < 0 || m >= 60 || s < 0 || s >= 60 || h < 0
+      ) {
+        return null;
+      }
+      return h * 3600 + m * 60 + s;
+    }
+
+    function distanceLabelToKm(label) {
+      switch (label) {
+        case '5k': return 5.0;
+        case '10k': return 10.0;
+        case 'HM': return 21.097;
+        case 'M': return 42.195;
+        default: return null;
+      }
+    }
+
+    function paceFrom(timeStr, distanceLabel) {
+      const secs = timeStrToSeconds(timeStr);
+      const km = distanceLabelToKm(distanceLabel);
+      if (!secs || !km) return null;
+      const secPerKm = secs / km;
+      const totalSecs = Math.round(secPerKm);
+      const min = Math.floor(totalSecs / 60);
+      const sec = totalSecs % 60;
+      return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+    }
+
+    async function loadRaces() {
+      resultsBody.innerHTML =
+        '<tr><td colspan="7" class="center">Loading...</td></tr>';
+      try {
+        const response = await fetch(`${API_BASE}/api/races`);
+        console.log('GET /api/races status:', response.status);
+
+        if (!response.ok) throw new Error('Failed to fetch races');
+        const data = await response.json();
+        console.log('Races received:', data);
+
+        resultsBody.innerHTML = '';
+        if (!data || data.length === 0) {
+          resultsBody.innerHTML =
+            '<tr><td colspan="7" class="center">No races saved yet.</td></tr>';
+          return;
+        }
+
+        data.forEach(race => {
+          const tr = document.createElement('tr');
+
+          const tdDate = document.createElement('td');
+          tdDate.textContent = race.date;
+          tr.appendChild(tdDate);
+
+          const tdEvent = document.createElement('td');
+          tdEvent.textContent = race.event_name;
+          tr.appendChild(tdEvent);
+
+          const tdCity = document.createElement('td');
+          tdCity.textContent = race.city;
+          tr.appendChild(tdCity);
+
+          const tdCountry = document.createElement('td');
+          tdCountry.textContent = race.country;
+          tr.appendChild(tdCountry);
+
+          const tdDistance = document.createElement('td');
+          tdDistance.textContent = race.distance_label;
+          tr.appendChild(tdDistance);
+
+          const tdTime = document.createElement('td');
+          tdTime.textContent = race.time_str;
+          tr.appendChild(tdTime);
+
+          const tdPace = document.createElement('td');
+          const pace = paceFrom(race.time_str, race.distance_label);
+          tdPace.textContent = pace || '-';
+          tr.appendChild(tdPace);
+
+          resultsBody.appendChild(tr);
+        });
+      } catch (err) {
+        resultsBody.innerHTML =
+          '<tr><td colspan="7" class="center">Error loading races.</td></tr>';
+        console.error('Error in loadRaces:', err);
+      }
+    }
+
+    loadRaces();
+  </script>
+</body>
+</html>

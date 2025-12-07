@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Race Ranking - Add Race</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .nav {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .nav a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #1976d2;
+      font-weight: bold;
+    }
+    .section {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .section h2 {
+      margin-top: 0;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 20px;
+      align-items: center;
+    }
+    label {
+      font-weight: bold;
+    }
+    input[type="text"], select {
+      padding: 6px 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .full-width {
+      grid-column: 1 / -1;
+    }
+    button {
+      padding: 8px 14px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      background: #1976d2;
+      color: white;
+      font-weight: bold;
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+    #message {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Race Ranking</h1>
+  <div class="nav">
+    <a href="index.html">Results</a>
+    <a href="input.html">Add Race</a>
+  </div>
+
+  <div class="section">
+    <h2>INPUT</h2>
+    <form id="race-form">
+      <label for="date">Date (dd/mm/yyyy)</label>
+      <input
+        type="text"
+        id="date"
+        name="date"
+        required
+        placeholder="dd/mm/yyyy"
+      />
+
+      <label for="eventName">Event Name</label>
+      <input
+        type="text"
+        id="eventName"
+        name="eventName"
+        required
+      />
+
+      <label for="city">City</label>
+      <input
+        type="text"
+        id="city"
+        name="city"
+        required
+      />
+
+      <label for="country">Country</label>
+      <input
+        type="text"
+        id="country"
+        name="country"
+        required
+      />
+
+      <label for="distance">Distance</label>
+      <select id="distance" name="distance" required>
+        <option value="">-- Select --</option>
+        <option value="5k">5k</option>
+        <option value="10k">10k</option>
+        <option value="HM">HM</option>
+        <option value="M">M</option>
+      </select>
+
+      <label for="time">Time (hh:mm:ss)</label>
+      <input
+        type="text"
+        id="time"
+        name="time"
+        required
+        placeholder="hh:mm:ss"
+      />
+
+      <div class="full-width">
+        <button type="submit" id="save-btn">Save</button>
+      </div>
+
+      <div id="message" class="full-width"></div>
+    </form>
+  </div>
+
+  <script>
+    // MESMA URL da API usada no index.html
+    const API_BASE = "https://SUA-API-AQUI.onrender.com";
+
+    const form = document.getElementById('race-form');
+    const messageDiv = document.getElementById('message');
+    const saveBtn = document.getElementById('save-btn');
+
+    function showMessage(text, isError = false) {
+      messageDiv.textContent = text;
+      messageDiv.style.color = isError ? 'red' : 'green';
+    }
+
+    function clearMessage() {
+      messageDiv.textContent = '';
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearMessage();
+
+      const date = document.getElementById('date').value.trim();
+      const eventName = document.getElementById('eventName').value.trim();
+      const city = document.getElementById('city').value.trim();
+      const country = document.getElementById('country').value.trim();
+      const distance = document.getElementById('distance').value;
+      const time = document.getElementById('time').value.trim();
+
+      const payload = {
+        date,
+        event_name: eventName,
+        city,
+        country,
+        distance_label: distance,
+        time_str: time
+      };
+
+      console.log('Saving race payload:', payload);
+      saveBtn.disabled = true;
+
+      try {
+        const response = await fetch(`${API_BASE}/api/races`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(errData.error || 'Failed to save race.');
+        }
+
+        showMessage('Race saved successfully!');
+        form.reset();
+        document.getElementById('distance').value = '';
+      } catch (err) {
+        showMessage(err.message, true);
+        console.error(err);
+      } finally {
+        saveBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
