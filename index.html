@@ -71,17 +71,19 @@
   <div class="section">
     <h2>RESULTS</h2>
     <table>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Event Name</th>
-          <th>City</th>
-          <th>Country</th>
-          <th>Distance</th>
-          <th>Time</th>
-          <th>Pace (min/km)</th>
-        </tr>
-      </thead>
+<thead>
+  <tr>
+    <th>Date</th>
+    <th>Event Name</th>
+    <th>City</th>
+    <th>Country</th>
+    <th>Distance</th>
+    <th>Time</th>
+    <th>Pace (min/km)</th>
+    <th>Actions</th>
+  </tr>
+</thead>
+
       <tbody id="results-body">
         <!-- Filled dynamically -->
       </tbody>
@@ -178,6 +180,14 @@
           tdPace.textContent = pace || '-';
           tr.appendChild(tdPace);
 
+          const tdActions = document.createElement('td');
+          const btnDelete = document.createElement('button');
+          btnDelete.textContent = 'Delete';
+          btnDelete.style.cursor = 'pointer';
+          btnDelete.onclick = () => deleteRace(race.id);
+          tdActions.appendChild(btnDelete);
+          tr.appendChild(tdActions);
+
           resultsBody.appendChild(tr);
         });
       } catch (err) {
@@ -188,6 +198,41 @@
     }
 
     loadRaces();
+
+async function deleteRace(id) {
+  const pwd = prompt("Digite a senha para excluir (hint: 333):");
+  if (pwd === null) {
+    // usuário cancelou
+    return;
+  }
+
+  if (!pwd.trim()) {
+    alert("Senha vazia.");
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_BASE}/api/races/${id}/delete`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: pwd.trim() }),
+    });
+
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      alert(errData.error || "Erro ao excluir corrida.");
+      return;
+    }
+
+    // sucesso
+    await loadRaces();
+  } catch (err) {
+    console.error("Erro ao excluir corrida:", err);
+    alert("Erro ao excluir corrida (ver console).");
+  }
+}
+
+    
   </script>
 </body>
 </html>
