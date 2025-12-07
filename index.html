@@ -83,6 +83,74 @@
     .center {
       text-align: center;
     }
+    /* ----- FORM SECTION (INPUT) ----- */
+
+.section {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  max-width: 1000px;
+  margin: 0 auto 30px auto; /* espaço abaixo para separar do RESULTS */
+}
+
+.section h2 {
+  margin-top: 0;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+/* Form grid como no input.html */
+#race-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 20px;
+  align-items: center;
+}
+
+#race-form label {
+  font-weight: bold;
+}
+
+#race-form input[type="text"],
+#race-form select {
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+#save-btn {
+  padding: 8px 14px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  background: #1976d2;
+  color: white;
+  font-weight: bold;
+}
+
+#save-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+#message {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  grid-column: 1 / -1;
+}
+
+/* Ajuste extra para manter visual harmonioso */
+.section form {
+  margin-bottom: 10px;
+}
+
   </style>
 </head>
 <body>
@@ -150,7 +218,7 @@
   </form>
 </div>
 
-
+<br>
   
   <div class="section">
     <h2>RESULTS</h2>
