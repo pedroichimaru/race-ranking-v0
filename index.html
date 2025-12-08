@@ -256,6 +256,30 @@
     </table>
   </div>
 
+  <!-- ============= PERSONAL BESTS SECTION ============= -->
+  <div class="section" id="pbs-section">
+    <h2>PERSONAL BESTS</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Distance</th>
+          <th>Date</th>
+          <th>Event Name</th>
+          <th>City</th>
+          <th>Country</th>
+          <th>Time</th>
+          <th>Pace (min/km)</th>
+        </tr>
+      </thead>
+      <tbody id="pb-body">
+        <!-- Filled dynamically -->
+      </tbody>
+    </table>
+  </div>
+
+
+  
   <script>
     // >>>>> TROCAR AQUI PELA SUA URL DO RENDER (sempre https!)
     const API_BASE = "https://race-ranking-v0-backend.onrender.com";
@@ -266,6 +290,8 @@
     const messageDiv = document.getElementById('message');
     const saveBtn = document.getElementById('save-btn');
     const form = document.getElementById('race-form');
+    const pbBody = document.getElementById('pb-body');
+
 
 // dados em memória + estado da ordenação
 let racesData = [];
@@ -428,6 +454,89 @@ function applySortAndRender() {
   renderTable(rows);
 }
 
+function renderPersonalBests(bestByDistance) {
+  pbBody.innerHTML = '';
+
+  const order = ['5k', '10k', 'HM', 'M'];
+  const labels = {
+    '5k': '5k',
+    '10k': '10k',
+    'HM': 'Half Marathon (HM)',
+    'M': 'Marathon (M)'
+  };
+
+  let hasAny = false;
+
+  order.forEach(dist => {
+    const pb = bestByDistance[dist];
+    if (!pb) return;
+
+    hasAny = true;
+    const tr = document.createElement('tr');
+
+    const tdDist = document.createElement('td');
+    tdDist.textContent = labels[dist];
+    tr.appendChild(tdDist);
+
+    const tdDate = document.createElement('td');
+    tdDate.textContent = pb.date;
+    tr.appendChild(tdDate);
+
+    const tdEvent = document.createElement('td');
+    tdEvent.textContent = pb.event_name;
+    tr.appendChild(tdEvent);
+
+    const tdCity = document.createElement('td');
+    tdCity.textContent = pb.city;
+    tr.appendChild(tdCity);
+
+    const tdCountry = document.createElement('td');
+    tdCountry.textContent = pb.country;
+    tr.appendChild(tdCountry);
+
+    const tdTime = document.createElement('td');
+    tdTime.textContent = pb.time_str;
+    tr.appendChild(tdTime);
+
+    const tdPace = document.createElement('td');
+    const pace = paceFrom(pb.time_str, pb.distance_label);
+    tdPace.textContent = pace || '-';
+    tr.appendChild(tdPace);
+
+    pbBody.appendChild(tr);
+  });
+
+  if (!hasAny) {
+    pbBody.innerHTML =
+      '<tr><td colspan="7" class="center">No personal bests yet.</td></tr>';
+  }
+}
+
+function computePersonalBests() {
+  const bestByDistance = {};
+  const validDistances = new Set(['5k', '10k', 'HM', 'M']);
+
+  racesData.forEach(race => {
+    const dist = race.distance_label;
+    if (!validDistances.has(dist)) return;
+
+    const secs = timeStrToSeconds(race.time_str);
+    if (!secs) return;
+
+    const current = bestByDistance[dist];
+    if (!current || secs < current.secs) {
+      bestByDistance[dist] = {
+        ...race,
+        secs
+      };
+    }
+  });
+
+  renderPersonalBests(bestByDistance);
+}
+
+
+    
     async function loadRaces() {
   resultsBody.innerHTML =
     '<tr><td colspan="8" class="center">Loading...</td></tr>';
@@ -441,6 +550,7 @@ function applySortAndRender() {
 
     racesData = data || [];
     applySortAndRender();
+    computePersonalBests();   // <-- NOVO
   } catch (err) {
     resultsBody.innerHTML =
       '<tr><td colspan="8" class="center">Error loading races.</td></tr>';
