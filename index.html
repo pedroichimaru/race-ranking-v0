@@ -237,18 +237,19 @@
     </div>
 
     <table>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Event Name</th>
-          <th>City</th>
-          <th>Country</th>
-          <th>Distance</th>
-          <th>Time</th>
-          <th>Pace (min/km)</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
+<thead>
+  <tr>
+    <th data-sort="date">Date</th>
+    <th data-sort="event_name">Event Name</th>
+    <th data-sort="city">City</th>
+    <th data-sort="country">Country</th>
+    <th data-sort="distance_label">Distance</th>
+    <th data-sort="time">Time</th>
+    <th data-sort="pace">Pace (min/km)</th>
+    <th>Actions</th>
+  </tr>
+</thead>
+
       <tbody id="results-body">
         <!-- Filled dynamically -->
       </tbody>
@@ -266,6 +267,11 @@
     const saveBtn = document.getElementById('save-btn');
     const form = document.getElementById('race-form');
 
+// dados em memória + estado da ordenação
+let racesData = [];
+let sortConfig = { key: null, direction: 'asc' }; // direction: 'asc' ou 'desc'
+
+    
     // ----- FUNÇÕES DE PACE -----
 
     function timeStrToSeconds(timeStr) {
@@ -315,75 +321,134 @@
       messageDiv.textContent = '';
     }
 
+function parseDateForSort(dateStr) {
+  // espera formato dd/mm/yyyy
+  const parts = dateStr.split('/');
+  if (parts.length !== 3) return 0;
+  const [d, m, y] = parts.map(Number);
+  if (!d || !m || !y) return 0;
+  const date = new Date(y, m - 1, d);
+  return date.getTime() || 0;
+}
+
+function getSortValue(race, key) {
+  switch (key) {
+    case 'date':
+      return parseDateForSort(race.date);
+    case 'event_name':
+      return (race.event_name || '').toLowerCase();
+    case 'city':
+      return (race.city || '').toLowerCase();
+    case 'country':
+      return (race.country || '').toLowerCase();
+    case 'distance_label':
+      return distanceLabelToKm(race.distance_label) || 0;
+    case 'time':
+      return timeStrToSeconds(race.time_str) || 0;
+    case 'pace': {
+      const secs = timeStrToSeconds(race.time_str) || 0;
+      const km = distanceLabelToKm(race.distance_label) || 1;
+      return secs / km; // segundos por km (menor = mais rápido)
+    }
+    default:
+      return 0;
+  }
+}
+
+function compareRaces(a, b, key, direction) {
+  const valA = getSortValue(a, key);
+  const valB = getSortValue(b, key);
+
+  if (valA < valB) return direction === 'asc' ? -1 : 1;
+  if (valA > valB) return direction === 'asc' ? 1 : -1;
+  return 0;
+}
+
+
+    
     // ----- CARREGAR CORRIDAS -----
 
+function renderTable(rows) {
+  resultsBody.innerHTML = '';
+  if (!rows || rows.length === 0) {
+    resultsBody.innerHTML =
+      '<tr><td colspan="8" class="center">No races saved yet.</td></tr>';
+    return;
+  }
+
+  rows.forEach(race => {
+    const tr = document.createElement('tr');
+
+    const tdDate = document.createElement('td');
+    tdDate.textContent = race.date;
+    tr.appendChild(tdDate);
+
+    const tdEvent = document.createElement('td');
+    tdEvent.textContent = race.event_name;
+    tr.appendChild(tdEvent);
+
+    const tdCity = document.createElement('td');
+    tdCity.textContent = race.city;
+    tr.appendChild(tdCity);
+
+    const tdCountry = document.createElement('td');
+    tdCountry.textContent = race.country;
+    tr.appendChild(tdCountry);
+
+    const tdDistance = document.createElement('td');
+    tdDistance.textContent = race.distance_label;
+    tr.appendChild(tdDistance);
+
+    const tdTime = document.createElement('td');
+    tdTime.textContent = race.time_str;
+    tr.appendChild(tdTime);
+
+    const tdPace = document.createElement('td');
+    const pace = paceFrom(race.time_str, race.distance_label);
+    tdPace.textContent = pace || '-';
+    tr.appendChild(tdPace);
+
+    const tdActions = document.createElement('td');
+    const btnDelete = document.createElement('button');
+    btnDelete.textContent = 'Delete';
+    btnDelete.className = 'btn btn-delete';
+    btnDelete.onclick = () => deleteRace(race.id);
+    tdActions.appendChild(btnDelete);
+    tr.appendChild(tdActions);
+
+    resultsBody.appendChild(tr);
+  });
+}
+
+function applySortAndRender() {
+  const rows = [...racesData];
+  if (sortConfig.key) {
+    rows.sort((a, b) => compareRaces(a, b, sortConfig.key, sortConfig.direction));
+  }
+  renderTable(rows);
+}
+
     async function loadRaces() {
-      resultsBody.innerHTML =
-        '<tr><td colspan="8" class="center">Loading...</td></tr>';
-      try {
-        const response = await fetch(`${API_BASE}/api/races`);
-        console.log('GET /api/races status:', response.status);
+  resultsBody.innerHTML =
+    '<tr><td colspan="8" class="center">Loading...</td></tr>';
+  try {
+    const response = await fetch(`${API_BASE}/api/races`);
+    console.log('GET /api/races status:', response.status);
 
-        if (!response.ok) throw new Error('Failed to fetch races');
-        const data = await response.json();
-        console.log('Races received:', data);
+    if (!response.ok) throw new Error('Failed to fetch races');
+    const data = await response.json();
+    console.log('Races received:', data);
 
-        resultsBody.innerHTML = '';
-        if (!data || data.length === 0) {
-          resultsBody.innerHTML =
-            '<tr><td colspan="8" class="center">No races saved yet.</td></tr>';
-          return;
-        }
+    racesData = data || [];
+    applySortAndRender();
+  } catch (err) {
+    resultsBody.innerHTML =
+      '<tr><td colspan="8" class="center">Error loading races.</td></tr>';
+    console.error('Error in loadRaces:', err);
+  }
+}
 
-        data.forEach(race => {
-          const tr = document.createElement('tr');
 
-          const tdDate = document.createElement('td');
-          tdDate.textContent = race.date;
-          tr.appendChild(tdDate);
-
-          const tdEvent = document.createElement('td');
-          tdEvent.textContent = race.event_name;
-          tr.appendChild(tdEvent);
-
-          const tdCity = document.createElement('td');
-          tdCity.textContent = race.city;
-          tr.appendChild(tdCity);
-
-          const tdCountry = document.createElement('td');
-          tdCountry.textContent = race.country;
-          tr.appendChild(tdCountry);
-
-          const tdDistance = document.createElement('td');
-          tdDistance.textContent = race.distance_label;
-          tr.appendChild(tdDistance);
-
-          const tdTime = document.createElement('td');
-          tdTime.textContent = race.time_str;
-          tr.appendChild(tdTime);
-
-          const tdPace = document.createElement('td');
-          const pace = paceFrom(race.time_str, race.distance_label);
-          tdPace.textContent = pace || '-';
-          tr.appendChild(tdPace);
-
-          // coluna de ações: Delete
-          const tdActions = document.createElement('td');
-          const btnDelete = document.createElement('button');
-          btnDelete.textContent = 'Delete';
-          btnDelete.className = 'btn btn-delete';
-          btnDelete.onclick = () => deleteRace(race.id);
-          tdActions.appendChild(btnDelete);
-          tr.appendChild(tdActions);
-
-          resultsBody.appendChild(tr);
-        });
-      } catch (err) {
-        resultsBody.innerHTML =
-          '<tr><td colspan="8" class="center">Error loading races.</td></tr>';
-        console.error('Error in loadRaces:', err);
-      }
-    }
 
     // ----- DELETE -----
 
@@ -553,6 +618,27 @@
       }
     }
 
+function setupSorting() {
+  const headers = document.querySelectorAll('th[data-sort]');
+  headers.forEach(th => {
+    th.style.cursor = 'pointer';
+    th.addEventListener('click', () => {
+      const key = th.getAttribute('data-sort');
+      if (sortConfig.key === key) {
+        // alterna asc/desc na mesma coluna
+        sortConfig.direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
+      } else {
+        // nova coluna: começa em asc
+        sortConfig.key = key;
+        sortConfig.direction = 'asc';
+      }
+      applySortAndRender();
+    });
+  });
+}
+
+
+    
     // ----- EVENT LISTENERS & INITIAL LOAD -----
 
     if (form) {
@@ -563,7 +649,26 @@
       exportBtn.addEventListener("click", exportToXls);
     }
 
-    loadRaces();
+    setupSorting();
+loadRaces();
+```)
+
+---
+
+## 📌 Como vai se comportar
+
+- **Click em “Date”** → ordena da mais antiga pra mais recente.  
+  Clique de novo → inverte (mais recente pra mais antiga).
+- **Event Name, City, Country** → A→Z, depois Z→A.
+- **Distance** → 5k, 10k, HM, M (curta → longa), depois o inverso.
+- **Time** → do menor tempo pro maior, depois o inverso.
+- **Pace** → do menor pace (mais rápido) pro maior, depois o inverso.
+
+Tudo isso **sem novo fetch** – só reordenando `racesData` em memória.
+
+Se quiser, depois a gente adiciona um visualzinho de setinha (▲ / ▼) no título da coluna pra mostrar a direção da ordenação atual.
+::contentReference[oaicite:0]{index=0}
+
   </script>
 </body>
 </html>
