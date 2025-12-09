@@ -462,7 +462,7 @@ function renderTable(rows) {
 
     const tdActions = document.createElement('td');
     const btnDelete = document.createElement('button');
-    btnDelete.textContent = 'Delete';
+    btnDelete.textContent = ' X ';
     btnDelete.className = 'btn btn-delete';
     btnDelete.onclick = () => deleteRace(race.id);
     tdActions.appendChild(btnDelete);
