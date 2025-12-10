@@ -1,832 +1,887 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Race Ranking</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <head>
+    <meta charset="UTF-8" />
+    <title>Race Ranking</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;500;700&display=swap"
+      rel="stylesheet" />
 
-<style>
-  /* GLOBAL --------------------------------------------------------------- */
+    <style>
+      :root {
+        --colorFundoPagina: #1e2129;
+        --colorFundoBox: radial-gradient(circle,rgba(49, 58, 67, 1) 0%, rgba(37, 40, 51, 1) 100%);
+        --colorBordaBox: #3e454c;
+        --colorTxt1: #ffffff;
+        --colorTxt2: #b2b7c1;
+        --colorBtn1: #5ca079;
+        --colorBtn2: #e05876;
+        --colorBtn3: #216dba;
+        --colorTableMother: #343c43;
+        --colorTableChild: #2a3239;
+      }
 
-  body {
-    font-family: "Roboto Slab", serif;
-    margin: 0;
-    padding: 20px;
-    background: #1e2129;
-    color: #ffffff;
-  }
+      body {
+        font-family: "Roboto Slab", sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: #1e2129;
+      }
 
-  h1 {
-    text-align: left;
-    margin-bottom: 10px;
-    font-size: 12px;
-    color: #ffffff;
-  }
+      h1 {
+        text-align: left;
+        margin-bottom: 10px;
+        font-size: 12px;
+      }
 
-  /* SECTION BOXES -------------------------------------------------------- */
+      .nav {
+        text-align: center;
+        margin-bottom: 20px;
+      }
 
-  .section {
-    background: #2f363d;
-    border: 1px solid #3e454c;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: none;
-    max-width: 1000px;
-    margin: 0 auto 30px auto;
-    color: #ffffff;
-  }
+      .nav a {
+        margin: 0 10px;
+        text-decoration: none;
+        color: #1976d2;
+        font-weight: bold;
+      }
 
-  .section-header h2,
-  .section h2 {
-    color: #ffffff;
-    border-bottom: 1px solid #3e454c;
-  }
+      /* ----- PROFILE HEADER ----- */
 
-  /* PROFILE HEADER ------------------------------------------------------- */
+      .profile-header {
+        background: var(--colorFundoBox);
+        color: var(--colorTxt1);
+        border: 1px solid var(--colorBordaBox);
+        border-radius: 8px;
+        padding: 16px 20px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        max-width: 900px;
+        margin: 0 auto 20px auto;
+      }
 
-  .profile-header {
-    background: #2f363d;
-    border: 1px solid #3e454c;
-    color: #ffffff;
-    border-radius: 8px;
-    padding: 16px 20px;
-    max-width: 1000px;
-    margin: 0 auto 20px auto;
-  }
+      .profile-top {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 12px;
+      }
 
-  .profile-avatar {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: #444;
-    overflow: hidden;
-    flex-shrink: 0;
-    border: 1px solid #3e454c;
-  }
+      .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: #444;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
 
-  .profile-card {
-    border: 1px solid #3e454c;
-    border-radius: 6px;
-    padding: 8px 10px;
-    min-width: 130px;
-    background: #2f363d;
-    color: #ffffff;
-  }
+      .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
 
-  .profile-card-label {
-    font-size: 0.75rem;
-    opacity: 0.8;
-  }
+      .profile-name {
+        font-size: 1.8rem;
+        font-weight: bold;
+      }
 
-  /* INPUT FORM ----------------------------------------------------------- */
+      .profile-sub {
+        font-size: 0.9rem;
+        opacity: 0.8;
+      }
 
-  #race-form label {
-    font-weight: bold;
-    color: #ffffff;
-  }
+      .profile-bottom {
+        display: flex;
+justify-content: space-evenly;
+        gap: 12px;
+      }
 
-  #race-form input[type="text"],
-  #race-form select {
-    padding: 6px 8px;
-    border-radius: 4px;
-    border: 1px solid #3e454c;
-    background: #1e2129;
-    color: #ffffff;
-    width: 100%;
-  }
+      .profile-card {
+        border: 1px solid var(--colorBordaBox);
+        border-radius: 6px;
+        padding: 8px 12px;
+        min-width: 138px;
+      }
 
-  #save-btn,
-  .btn {
-    background: #1976d2;
-    color: #ffffff;
-    border: 1px solid #3e454c;
-  }
+      .profile-card-label {
+        font-size: 0.75rem;
+        opacity: 0.8;
+        margin-bottom: 2px;
+      }
 
-  #save-btn:hover,
-  .btn:hover {
-    filter: brightness(1.2);
-  }
+      .profile-card-value {
+        font-size: 1.2rem;
+        font-weight: bold;
+      }
 
-  /* TABLES --------------------------------------------------------------- */
+      /* ----- FORM SECTION (INPUT) ----- */
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    font-size: 0.9rem;
-    color: #ffffff;
-  }
+      .section {
+        background: var(--colorFundoBox);
+        border: 1px solid #3e454c;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        max-width: 900px;
+        margin: 0 auto 30px auto;
+      }
 
-  th,
-  td {
-    border: 1px solid #3e454c;
-    padding: 6px 8px;
-    text-align: left;
-    white-space: nowrap;
-  }
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        color: #ffffff;
+      }
 
-  th {
-    background: #3e454c;
-    color: #ffffff;
-    font-weight: 600;
-    cursor: pointer;
-  }
+      .btn-toggle {
+        background: var(--colorBtn1);
+        color: #fff;
+      }
 
-  tbody tr:nth-child(even) {
-    background: #252a31;
-  }
+      /* esconde o conteúdo do input quando colapsado */
+      #input-content.collapsed {
+        display: none;
+      }
 
-  tbody tr:nth-child(odd) {
-    background: #2f363d;
-  }
+      .section h2 {
+        margin-top: 0;
+        color: #ffffff;
+      }
 
-  .btn-delete {
-    background: #d32f2f;
-    color: white;
-    border: 1px solid #3e454c;
-  }
+      #race-form {
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+        gap: 10px 20px;
+        align-items: center;
+        color: var(--colorTxt1);
+        font-size: 0.9rem;
+      }
 
-  .btn-export {
-    background: #2e7d32;
-    color: white;
-    border: 1px solid #3e454c;
-  }
+      #race-form label {
+        font-weight: 500;
+        color: var(--colorTxt2);
+      }
 
-  /* COLLAPSIBLE INPUT ---------------------------------------------------- */
+      #race-form input[type="text"],
+      #race-form select {
+        padding: 6px 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        width: 100%;
+        box-sizing: border-box;
+        font-family: "Roboto Slab", serif;
+      }
 
-  #input-content.collapsed {
-    display: none;
-  }
+      .full-width {
+        grid-column: 1 / -1;
+          text-align: right;
+        padding: 12px 0px 0px 0px;
+      }
 
-  .btn-toggle {
-    background: #1976d2;
-    color: #ffffff;
-    border: 1px solid #3e454c;
-  }
-</style>
+      #save-btn {
+        padding: 8px 14px;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        background: var(--colorBtn3);
+        color: white;
+        font-weight: bold;
+        font-family: "Roboto Slab", serif;
+        font-size: 0.9rem;
+      }
 
-  
-</head>
-<body>
+      #save-btn:disabled {
+        opacity: 0.6;
+        cursor: default;
+      }
 
+      #message {
+        margin-top: 10px;
+        font-size: 0.9rem;
+        grid-column: 1 / -1;
+      }
+
+      .section form {
+        margin-bottom: 10px;
+      }
+
+      /* ----- RESULTS TABLE ----- */
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        font-size: 0.9rem;
+        color: var(--colorTxt2)
+      }
+
+      th,
+      td {
+        border-top: 1px solid var(--colorBordaBox);
+        border-bottom: 1px solid var(--colorBordaBox);
+        padding: 6px 8px;
+        text-align: left;
+        white-space: nowrap;
+        height: 25px;
+      }
+
+      th {
+
+        color: var(--colorTxt1);
+
+      }
+      
+      tr {
+
+      }
+      
+      tbody tr:nth-child(even) {
+
+      }
+
+      td:nth-child(8) {
+  text-align: center;
+}
+
+td .btn-delete {
+  display: inline-block;
+  margin: 0 auto;
+}
+
+      
+      .center {
+        text-align: center;
+      }
+
+      /* ----- ACTIONS BAR & BUTTONS ----- */
+
+      .actions-bar {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 10px;
+        gap: 10px;
+      }
+
+      .btn {
+        padding: 6px 12px;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        font-family: "Roboto Slab", serif;
+        font-size: 0.9em;
+      }
+
+      .btn-export {
+        background: var(--colorBtn1);
+        color: #fff;
+      }
+
+      .btn-export:disabled {
+        opacity: 0.6;
+        cursor: default;
+      }
+
+      .btn-delete {
+        background: var(--colorBtn2);
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
     <!-- ============= PROFILE SECTION ============= -->
-  <div class="profile-header">
-    <div class="profile-top">
-      <div class="profile-avatar">
-        <img src="avatar.png" alt="Avatar">
+    <div class="profile-header">
+      <div class="profile-top">
+        <div class="profile-avatar">
+          <img src="avatar.png" alt="Avatar" />
+        </div>
+        <div>
+          <div class="profile-name">Pedro ICHIMARU</div>
+          <!-- se quiser uma sublinha (ex.: "Road Running Profile"), descomente abaixo -->
+          <!-- <div class="profile-sub">Road Running Profile</div> -->
+        </div>
       </div>
-      <div>
-        <div class="profile-name">Pedro ICHIMARU</div>
-        <!-- se quiser uma sublinha (ex.: "Road Running Profile"), descomente abaixo -->
-        <!-- <div class="profile-sub">Road Running Profile</div> -->
+
+      <div class="profile-bottom">
+        <div class="profile-card">
+          <div class="profile-card-label">Location:</div>
+          <div class="profile-card-value">São Paulo, BRAZIL</div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-card-label">Age:</div>
+          <div class="profile-card-value">39</div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-card-label">Category:</div>
+          <div class="profile-card-value">Male</div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-card-label">Ranking:</div>
+          <div class="profile-card-value">-</div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-card-label">Points:</div>
+          <div class="profile-card-value">-</div>
+        </div>
       </div>
     </div>
 
-    <div class="profile-bottom">
-      <div class="profile-card">
-        <div class="profile-card-label">Location:</div>
-        <div class="profile-card-value">São Paulo, BRAZIL</div>
+    <!-- ============= PERSONAL BESTS SECTION ============= -->
+    <div class="section" id="pbs-section">
+      <h2>PERSONAL BESTS</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Distance</th>
+            <th>Date</th>
+            <th>Event Name</th>
+            <th>City</th>
+            <th>Country</th>
+            <th>Time</th>
+            <th>Pace (min/km)</th>
+          </tr>
+        </thead>
+        <tbody id="pb-body">
+          <!-- Filled dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ============= INPUT SECTION ============= -->
+    <div class="section" id="input-section">
+      <div class="section-header">
+        <h2>INPUT</h2>
+        <button type="button" id="toggle-input-btn" class="btn btn-toggle">+ New Race</button>
       </div>
-      <div class="profile-card">
-        <div class="profile-card-label">Age:</div>
-        <div class="profile-card-value">39</div>
-      </div>
-      <div class="profile-card">
-        <div class="profile-card-label">Category:</div>
-        <div class="profile-card-value">Male</div>
-      </div>
-      <div class="profile-card">
-        <div class="profile-card-label">Ranking:</div>
-        <div class="profile-card-value">-</div>
-      </div>
-      <div class="profile-card">
-        <div class="profile-card-label">Points:</div>
-        <div class="profile-card-value">-</div>
+
+      <div id="input-content" class="collapsed">
+        <form id="race-form">
+          <label for="date">Date (dd/mm/yyyy)</label>
+          <input type="text" id="date" name="date" required placeholder="dd/mm/yyyy" />
+
+          <label for="eventName">Event Name</label>
+          <input type="text" id="eventName" name="eventName" required placeholder="Event Name"/>
+
+          <label for="city">City</label>
+          <input type="text" id="city" name="city" required placeholder="City"/>
+
+          <label for="country">Country</label>
+          <input type="text" id="country" name="country" required placeholder="Country"/>
+
+          <label for="distance">Distance</label>
+          <select id="distance" name="distance" required placeholder="dd/mm/yyyy">
+            <option value="">- Select Distance -</option>
+            <option value="5k">5k</option>
+            <option value="10k">10k</option>
+            <option value="HM">HM</option>
+            <option value="M">M</option>
+          </select>
+
+          <label for="time">Time (hh:mm:ss)</label>
+          <input type="text" id="time" name="time" required placeholder="hh:mm:ss" />
+
+          <div class="full-width">
+            <button type="submit" id="save-btn">Save</button>
+          </div>
+        </form>
       </div>
     </div>
-  </div>
 
-  <!-- ============= PERSONAL BESTS SECTION ============= -->
-  <div class="section" id="pbs-section">
-    <h2>PERSONAL BESTS</h2>
+    <!-- ============= RESULTS SECTION ============= -->
+    <div class="section" id="results-section">
+      <h2>RESULTS</h2>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Distance</th>
-          <th>Date</th>
-          <th>Event Name</th>
-          <th>City</th>
-          <th>Country</th>
-          <th>Time</th>
-          <th>Pace (min/km)</th>
-        </tr>
-      </thead>
-      <tbody id="pb-body">
-        <!-- Filled dynamically -->
-      </tbody>
-    </table>
-  </div>
-  
-  <!-- ============= INPUT SECTION ============= -->
-<div class="section" id="input-section">
-  <div class="section-header">
-    <h2>INPUT</h2>
-    <button type="button" id="toggle-input-btn" class="btn btn-toggle">
-      Add Race
-    </button>
-  </div>
+      <table>
+        <thead>
+          <tr>
+            <th data-sort="date">Date</th>
+            <th data-sort="event_name">Event Name</th>
+            <th data-sort="city">City</th>
+            <th data-sort="country">Country</th>
+            <th data-sort="distance_label">Distance</th>
+            <th data-sort="time">Time</th>
+            <th data-sort="pace">Pace (min/km)</th>
+            <th class="center">Delete</th>
+          </tr>
+        </thead>
 
-  <div id="input-content" class="collapsed">
-    <form id="race-form">
-      <label for="date">Date (dd/mm/yyyy)</label>
-      <input
-        type="text"
-        id="date"
-        name="date"
-        required
-        placeholder="dd/mm/yyyy"
-      />
-
-      <label for="eventName">Event Name</label>
-      <input
-        type="text"
-        id="eventName"
-        name="eventName"
-        required
-      />
-
-      <label for="city">City</label>
-      <input
-        type="text"
-        id="city"
-        name="city"
-        required
-      />
-
-      <label for="country">Country</label>
-      <input
-        type="text"
-        id="country"
-        name="country"
-        required
-      />
-
-      <label for="distance">Distance</label>
-      <select id="distance" name="distance" required>
-        <option value="">-- Select --</option>
-        <option value="5k">5k</option>
-        <option value="10k">10k</option>
-        <option value="HM">HM</option>
-        <option value="M">M</option>
-      </select>
-
-      <label for="time">Time (hh:mm:ss)</label>
-      <input
-        type="text"
-        id="time"
-        name="time"
-        required
-        placeholder="hh:mm:ss"
-      />
-
-      <div class="full-width">
-        <button type="submit" id="save-btn">Save</button>
+        <tbody id="results-body">
+          <!-- Filled dynamically -->
+        </tbody>
+      </table>
+      <br />
+      <div class="actions-bar">
+        <button id="export-btn" class="btn btn-export">Export XLS</button>
       </div>
-
-      <div id="message" class="full-width"></div>
-    </form>
-  </div>
-</div>
-
-
-  <!-- ============= RESULTS SECTION ============= -->
-  <div class="section" id="results-section">
-    <h2>RESULTS</h2>
-
-    <table>
-<thead>
-  <tr>
-    <th data-sort="date">Date</th>
-    <th data-sort="event_name">Event Name</th>
-    <th data-sort="city">City</th>
-    <th data-sort="country">Country</th>
-    <th data-sort="distance_label">Distance</th>
-    <th data-sort="time">Time</th>
-    <th data-sort="pace">Pace (min/km)</th>
-    <th>Actions</th>
-  </tr>
-</thead>
-
-      <tbody id="results-body">
-        <!-- Filled dynamically -->
-      </tbody>
-    </table>
-    <br>
-    <div class="actions-bar">
-      <button id="export-btn" class="btn btn-export">Export XLS</button>
     </div>
-    
-  </div>
 
+    <script>
+      // >>>>> TROCAR AQUI PELA SUA URL DO RENDER (sempre https!)
+      const API_BASE = "https://race-ranking-v0-backend.onrender.com";
 
+      // ----- ELEMENTOS DOM -----
+      const resultsBody = document.getElementById("results-body");
+      const exportBtn = document.getElementById("export-btn");
+      const messageDiv = document.getElementById("message");
+      const saveBtn = document.getElementById("save-btn");
+      const form = document.getElementById("race-form");
+      const pbBody = document.getElementById("pb-body");
+      const toggleInputBtn = document.getElementById("toggle-input-btn");
+      const inputContent = document.getElementById("input-content");
 
+      // dados em memória + estado da ordenação
+      let racesData = [];
+      let sortConfig = { key: null, direction: "asc" }; // direction: 'asc' ou 'desc'
 
-  
-  <script>
-    // >>>>> TROCAR AQUI PELA SUA URL DO RENDER (sempre https!)
-    const API_BASE = "https://race-ranking-v0-backend.onrender.com";
+      // ----- FUNÇÕES DE PACE -----
 
-    // ----- ELEMENTOS DOM -----
-    const resultsBody = document.getElementById('results-body');
-    const exportBtn = document.getElementById('export-btn');
-    const messageDiv = document.getElementById('message');
-    const saveBtn = document.getElementById('save-btn');
-    const form = document.getElementById('race-form');
-    const pbBody = document.getElementById('pb-body');
-    const toggleInputBtn = document.getElementById('toggle-input-btn');
-const inputContent = document.getElementById('input-content');
-
-
-
-// dados em memória + estado da ordenação
-let racesData = [];
-let sortConfig = { key: null, direction: 'asc' }; // direction: 'asc' ou 'desc'
-
-    
-    // ----- FUNÇÕES DE PACE -----
-
-    function timeStrToSeconds(timeStr) {
-      const parts = timeStr.split(':');
-      if (parts.length !== 3) return null;
-      const [h, m, s] = parts.map(Number);
-      if (
-        Number.isNaN(h) || Number.isNaN(m) || Number.isNaN(s) ||
-        m < 0 || m >= 60 || s < 0 || s >= 60 || h < 0
-      ) {
-        return null;
-      }
-      return h * 3600 + m * 60 + s;
-    }
-
-    function distanceLabelToKm(label) {
-      switch (label) {
-        case '5k': return 5.0;
-        case '10k': return 10.0;
-        case 'HM': return 21.097;
-        case 'M': return 42.195;
-        default: return null;
-      }
-    }
-
-    function paceFrom(timeStr, distanceLabel) {
-      const secs = timeStrToSeconds(timeStr);
-      const km = distanceLabelToKm(distanceLabel);
-      if (!secs || !km) return null;
-      const secPerKm = secs / km;
-      const totalSecs = Math.round(secPerKm);
-      const min = Math.floor(totalSecs / 60);
-      const sec = totalSecs % 60;
-      return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
-    }
-
-    // ----- MENSAGENS FORM -----
-
-    function showMessage(text, isError = false) {
-      if (!messageDiv) return;
-      messageDiv.textContent = text;
-      messageDiv.style.color = isError ? 'red' : 'green';
-    }
-
-    function clearMessage() {
-      if (!messageDiv) return;
-      messageDiv.textContent = '';
-    }
-
-function parseDateForSort(dateStr) {
-  // espera formato dd/mm/yyyy
-  const parts = dateStr.split('/');
-  if (parts.length !== 3) return 0;
-  const [d, m, y] = parts.map(Number);
-  if (!d || !m || !y) return 0;
-  const date = new Date(y, m - 1, d);
-  return date.getTime() || 0;
-}
-
-function getSortValue(race, key) {
-  switch (key) {
-    case 'date':
-      return parseDateForSort(race.date);
-    case 'event_name':
-      return (race.event_name || '').toLowerCase();
-    case 'city':
-      return (race.city || '').toLowerCase();
-    case 'country':
-      return (race.country || '').toLowerCase();
-    case 'distance_label':
-      return distanceLabelToKm(race.distance_label) || 0;
-    case 'time':
-      return timeStrToSeconds(race.time_str) || 0;
-    case 'pace': {
-      const secs = timeStrToSeconds(race.time_str) || 0;
-      const km = distanceLabelToKm(race.distance_label) || 1;
-      return secs / km; // segundos por km (menor = mais rápido)
-    }
-    default:
-      return 0;
-  }
-}
-
-function compareRaces(a, b, key, direction) {
-  const valA = getSortValue(a, key);
-  const valB = getSortValue(b, key);
-
-  if (valA < valB) return direction === 'asc' ? -1 : 1;
-  if (valA > valB) return direction === 'asc' ? 1 : -1;
-  return 0;
-}
-
-
-    
-    // ----- CARREGAR CORRIDAS -----
-
-function renderTable(rows) {
-  resultsBody.innerHTML = '';
-  if (!rows || rows.length === 0) {
-    resultsBody.innerHTML =
-      '<tr><td colspan="8" class="center">No races saved yet.</td></tr>';
-    return;
-  }
-
-  rows.forEach(race => {
-    const tr = document.createElement('tr');
-
-    const tdDate = document.createElement('td');
-    tdDate.textContent = race.date;
-    tr.appendChild(tdDate);
-
-    const tdEvent = document.createElement('td');
-    tdEvent.textContent = race.event_name;
-    tr.appendChild(tdEvent);
-
-    const tdCity = document.createElement('td');
-    tdCity.textContent = race.city;
-    tr.appendChild(tdCity);
-
-    const tdCountry = document.createElement('td');
-    tdCountry.textContent = race.country;
-    tr.appendChild(tdCountry);
-
-    const tdDistance = document.createElement('td');
-    tdDistance.textContent = race.distance_label;
-    tr.appendChild(tdDistance);
-
-    const tdTime = document.createElement('td');
-    tdTime.textContent = race.time_str;
-    tr.appendChild(tdTime);
-
-    const tdPace = document.createElement('td');
-    const pace = paceFrom(race.time_str, race.distance_label);
-    tdPace.textContent = pace || '-';
-    tr.appendChild(tdPace);
-
-    const tdActions = document.createElement('td');
-    const btnDelete = document.createElement('button');
-    btnDelete.textContent = ' X ';
-    btnDelete.className = 'btn btn-delete';
-    btnDelete.onclick = () => deleteRace(race.id);
-    tdActions.appendChild(btnDelete);
-    tr.appendChild(tdActions);
-
-    resultsBody.appendChild(tr);
-  });
-}
-
-function applySortAndRender() {
-  const rows = [...racesData];
-  if (sortConfig.key) {
-    rows.sort((a, b) => compareRaces(a, b, sortConfig.key, sortConfig.direction));
-  }
-  renderTable(rows);
-}
-
-function renderPersonalBests(bestByDistance) {
-  pbBody.innerHTML = '';
-
-  const order = ['5k', '10k', 'HM', 'M'];
-  const labels = {
-    '5k': '5k',
-    '10k': '10k',
-    'HM': 'Half Marathon (HM)',
-    'M': 'Marathon (M)'
-  };
-
-  let hasAny = false;
-
-  order.forEach(dist => {
-    const pb = bestByDistance[dist];
-    if (!pb) return;
-
-    hasAny = true;
-    const tr = document.createElement('tr');
-
-    const tdDist = document.createElement('td');
-    tdDist.textContent = labels[dist];
-    tr.appendChild(tdDist);
-
-    const tdDate = document.createElement('td');
-    tdDate.textContent = pb.date;
-    tr.appendChild(tdDate);
-
-    const tdEvent = document.createElement('td');
-    tdEvent.textContent = pb.event_name;
-    tr.appendChild(tdEvent);
-
-    const tdCity = document.createElement('td');
-    tdCity.textContent = pb.city;
-    tr.appendChild(tdCity);
-
-    const tdCountry = document.createElement('td');
-    tdCountry.textContent = pb.country;
-    tr.appendChild(tdCountry);
-
-    const tdTime = document.createElement('td');
-    tdTime.textContent = pb.time_str;
-    tr.appendChild(tdTime);
-
-    const tdPace = document.createElement('td');
-    const pace = paceFrom(pb.time_str, pb.distance_label);
-    tdPace.textContent = pace || '-';
-    tr.appendChild(tdPace);
-
-    pbBody.appendChild(tr);
-  });
-
-  if (!hasAny) {
-    pbBody.innerHTML =
-      '<tr><td colspan="7" class="center">No personal bests yet.</td></tr>';
-  }
-}
-
-function computePersonalBests() {
-  const bestByDistance = {};
-  const validDistances = new Set(['5k', '10k', 'HM', 'M']);
-
-  racesData.forEach(race => {
-    const dist = race.distance_label;
-    if (!validDistances.has(dist)) return;
-
-    const secs = timeStrToSeconds(race.time_str);
-    if (!secs) return;
-
-    const current = bestByDistance[dist];
-    if (!current || secs < current.secs) {
-      bestByDistance[dist] = {
-        ...race,
-        secs
-      };
-    }
-  });
-
-  renderPersonalBests(bestByDistance);
-}
-
-
-    
-    async function loadRaces() {
-  resultsBody.innerHTML =
-    '<tr><td colspan="8" class="center">Loading...</td></tr>';
-  try {
-    const response = await fetch(`${API_BASE}/api/races`);
-    console.log('GET /api/races status:', response.status);
-
-    if (!response.ok) throw new Error('Failed to fetch races');
-    const data = await response.json();
-    console.log('Races received:', data);
-
-    racesData = data || [];
-    applySortAndRender();
-    computePersonalBests();   // <-- NOVO
-  } catch (err) {
-    resultsBody.innerHTML =
-      '<tr><td colspan="8" class="center">Error loading races.</td></tr>';
-    console.error('Error in loadRaces:', err);
-  }
-}
-
-
-
-    // ----- DELETE -----
-
-    async function deleteRace(id) {
-      const pwd = prompt("Digite a senha para excluir (hint: 333):");
-      if (pwd === null) return;
-      if (!pwd.trim()) {
-        alert("Senha vazia.");
-        return;
+      function timeStrToSeconds(timeStr) {
+        const parts = timeStr.split(":");
+        if (parts.length !== 3) return null;
+        const [h, m, s] = parts.map(Number);
+        if (Number.isNaN(h) || Number.isNaN(m) || Number.isNaN(s) || m < 0 || m >= 60 || s < 0 || s >= 60 || h < 0) {
+          return null;
+        }
+        return h * 3600 + m * 60 + s;
       }
 
-      try {
-        const response = await fetch(`${API_BASE}/api/races/${id}/delete`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ password: pwd.trim() }),
-        });
+      function distanceLabelToKm(label) {
+        switch (label) {
+          case "5k":
+            return 5.0;
+          case "10k":
+            return 10.0;
+          case "HM":
+            return 21.097;
+          case "M":
+            return 42.195;
+          default:
+            return null;
+        }
+      }
 
-        if (!response.ok) {
-          const errData = await response.json().catch(() => ({}));
-          alert(errData.error || "Erro ao excluir corrida.");
+      function paceFrom(timeStr, distanceLabel) {
+        const secs = timeStrToSeconds(timeStr);
+        const km = distanceLabelToKm(distanceLabel);
+        if (!secs || !km) return null;
+        const secPerKm = secs / km;
+        const totalSecs = Math.round(secPerKm);
+        const min = Math.floor(totalSecs / 60);
+        const sec = totalSecs % 60;
+        return `${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+      }
+
+      // ----- MENSAGENS FORM -----
+
+      function showMessage(text, isError = false) {
+        if (!messageDiv) return;
+        messageDiv.textContent = text;
+        messageDiv.style.color = isError ? "red" : "green";
+      }
+
+      function clearMessage() {
+        if (!messageDiv) return;
+        messageDiv.textContent = "";
+      }
+
+      function parseDateForSort(dateStr) {
+        // espera formato dd/mm/yyyy
+        const parts = dateStr.split("/");
+        if (parts.length !== 3) return 0;
+        const [d, m, y] = parts.map(Number);
+        if (!d || !m || !y) return 0;
+        const date = new Date(y, m - 1, d);
+        return date.getTime() || 0;
+      }
+
+      function getSortValue(race, key) {
+        switch (key) {
+          case "date":
+            return parseDateForSort(race.date);
+          case "event_name":
+            return (race.event_name || "").toLowerCase();
+          case "city":
+            return (race.city || "").toLowerCase();
+          case "country":
+            return (race.country || "").toLowerCase();
+          case "distance_label":
+            return distanceLabelToKm(race.distance_label) || 0;
+          case "time":
+            return timeStrToSeconds(race.time_str) || 0;
+          case "pace": {
+            const secs = timeStrToSeconds(race.time_str) || 0;
+            const km = distanceLabelToKm(race.distance_label) || 1;
+            return secs / km; // segundos por km (menor = mais rápido)
+          }
+          default:
+            return 0;
+        }
+      }
+
+      function compareRaces(a, b, key, direction) {
+        const valA = getSortValue(a, key);
+        const valB = getSortValue(b, key);
+
+        if (valA < valB) return direction === "asc" ? -1 : 1;
+        if (valA > valB) return direction === "asc" ? 1 : -1;
+        return 0;
+      }
+
+      // ----- CARREGAR CORRIDAS -----
+
+      function renderTable(rows) {
+        resultsBody.innerHTML = "";
+        if (!rows || rows.length === 0) {
+          resultsBody.innerHTML = '<tr><td colspan="8" class="center">No races saved yet.</td></tr>';
           return;
         }
 
-        await loadRaces();
-      } catch (err) {
-        console.error("Erro ao excluir corrida:", err);
-        alert("Erro ao excluir corrida (ver console).");
+        rows.forEach((race) => {
+          const tr = document.createElement("tr");
+
+          const tdDate = document.createElement("td");
+          tdDate.textContent = race.date;
+          tr.appendChild(tdDate);
+
+          const tdEvent = document.createElement("td");
+          tdEvent.textContent = race.event_name;
+          tr.appendChild(tdEvent);
+
+          const tdCity = document.createElement("td");
+          tdCity.textContent = race.city;
+          tr.appendChild(tdCity);
+
+          const tdCountry = document.createElement("td");
+          tdCountry.textContent = race.country;
+          tr.appendChild(tdCountry);
+
+          const tdDistance = document.createElement("td");
+          tdDistance.textContent = race.distance_label;
+          tr.appendChild(tdDistance);
+
+          const tdTime = document.createElement("td");
+          tdTime.textContent = race.time_str;
+          tr.appendChild(tdTime);
+
+          const tdPace = document.createElement("td");
+          const pace = paceFrom(race.time_str, race.distance_label);
+          tdPace.textContent = pace || "-";
+          tr.appendChild(tdPace);
+
+          const tdActions = document.createElement("td");
+          const btnDelete = document.createElement("button");
+          btnDelete.textContent = " X ";
+          btnDelete.className = "btn btn-delete";
+          btnDelete.onclick = () => deleteRace(race.id);
+          tdActions.appendChild(btnDelete);
+          tr.appendChild(tdActions);
+
+          resultsBody.appendChild(tr);
+        });
       }
-    }
 
-    // ----- EXPORT XLS -----
-
-    async function exportToXls() {
-      if (!exportBtn) return;
-
-      exportBtn.disabled = true;
-      exportBtn.textContent = "Exporting...";
-
-      try {
-        const response = await fetch(`${API_BASE}/api/races`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch races for export");
+      function applySortAndRender() {
+        const rows = [...racesData];
+        if (sortConfig.key) {
+          rows.sort((a, b) => compareRaces(a, b, sortConfig.key, sortConfig.direction));
         }
-        const data = await response.json();
+        renderTable(rows);
+      }
 
-        if (!data || data.length === 0) {
-          alert("No races to export.");
+      function renderPersonalBests(bestByDistance) {
+        pbBody.innerHTML = "";
+
+        const order = ["5k", "10k", "HM", "M"];
+        const labels = {
+          "5k": "5k",
+          "10k": "10k",
+          HM: "Half Marathon (HM)",
+          M: "Marathon (M)"
+        };
+
+        let hasAny = false;
+
+        order.forEach((dist) => {
+          const pb = bestByDistance[dist];
+          if (!pb) return;
+
+          hasAny = true;
+          const tr = document.createElement("tr");
+
+          const tdDist = document.createElement("td");
+          tdDist.textContent = labels[dist];
+          tr.appendChild(tdDist);
+
+          const tdDate = document.createElement("td");
+          tdDate.textContent = pb.date;
+          tr.appendChild(tdDate);
+
+          const tdEvent = document.createElement("td");
+          tdEvent.textContent = pb.event_name;
+          tr.appendChild(tdEvent);
+
+          const tdCity = document.createElement("td");
+          tdCity.textContent = pb.city;
+          tr.appendChild(tdCity);
+
+          const tdCountry = document.createElement("td");
+          tdCountry.textContent = pb.country;
+          tr.appendChild(tdCountry);
+
+          const tdTime = document.createElement("td");
+          tdTime.textContent = pb.time_str;
+          tr.appendChild(tdTime);
+
+          const tdPace = document.createElement("td");
+          const pace = paceFrom(pb.time_str, pb.distance_label);
+          tdPace.textContent = pace || "-";
+          tr.appendChild(tdPace);
+
+          pbBody.appendChild(tr);
+        });
+
+        if (!hasAny) {
+          pbBody.innerHTML = '<tr><td colspan="7" class="center">No personal bests yet.</td></tr>';
+        }
+      }
+
+      function computePersonalBests() {
+        const bestByDistance = {};
+        const validDistances = new Set(["5k", "10k", "HM", "M"]);
+
+        racesData.forEach((race) => {
+          const dist = race.distance_label;
+          if (!validDistances.has(dist)) return;
+
+          const secs = timeStrToSeconds(race.time_str);
+          if (!secs) return;
+
+          const current = bestByDistance[dist];
+          if (!current || secs < current.secs) {
+            bestByDistance[dist] = {
+              ...race,
+              secs
+            };
+          }
+        });
+
+        renderPersonalBests(bestByDistance);
+      }
+
+      async function loadRaces() {
+        resultsBody.innerHTML = '<tr><td colspan="8" class="center">Loading...</td></tr>';
+        try {
+          const response = await fetch(`${API_BASE}/api/races`);
+          console.log("GET /api/races status:", response.status);
+
+          if (!response.ok) throw new Error("Failed to fetch races");
+          const data = await response.json();
+          console.log("Races received:", data);
+
+          racesData = data || [];
+          applySortAndRender();
+          computePersonalBests(); // <-- NOVO
+        } catch (err) {
+          resultsBody.innerHTML = '<tr><td colspan="8" class="center">Error loading races.</td></tr>';
+          console.error("Error in loadRaces:", err);
+        }
+      }
+
+      // ----- DELETE -----
+
+      async function deleteRace(id) {
+        const pwd = prompt("Digite a senha para excluir:");
+        if (pwd === null) return;
+        if (!pwd.trim()) {
+          alert("Senha vazia.");
           return;
         }
 
-        const header = [
-          "Date",
-          "Event Name",
-          "City",
-          "Country",
-          "Distance",
-          "Time",
-          "Pace (min/km)"
-        ];
+        try {
+          const response = await fetch(`${API_BASE}/api/races/${id}/delete`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: pwd.trim() })
+          });
 
-        const rows = [];
-        rows.push(header);
+          if (!response.ok) {
+            const errData = await response.json().catch(() => ({}));
+            alert(errData.error || "Erro ao excluir corrida.");
+            return;
+          }
 
-        data.forEach(race => {
-          const pace = paceFrom(race.time_str, race.distance_label) || "";
-          rows.push([
-            race.date,
-            race.event_name,
-            race.city,
-            race.country,
-            race.distance_label,
-            race.time_str,
-            pace
-          ]);
-        });
-
-        const lines = rows.map(cols =>
-          cols
-            .map(value => {
-              const v = value == null ? "" : String(value);
-              const escaped = v.replace(/"/g, '""');
-              return `"${escaped}"`;
-            })
-            .join(";")
-        );
-
-        const csvContent = lines.join("\r\n");
-
-        const blob = new Blob([csvContent], {
-          type: "application/vnd.ms-excel;charset=utf-8;"
-        });
-
-        const url = URL.createObjectURL(blob);
-
-        const a = document.createElement("a");
-        const now = new Date();
-        const yyyy = now.getFullYear();
-        const mm = String(now.getMonth() + 1).padStart(2, "0");
-        const dd = String(now.getDate()).padStart(2, "0");
-        const hh = String(now.getHours()).padStart(2, "0");
-        const min = String(now.getMinutes()).padStart(2, "0");
-
-        a.href = url;
-        a.download = `race-ranking-${yyyy}${mm}${dd}-${hh}${min}.xls`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      } catch (err) {
-        console.error("Error exporting XLS:", err);
-        alert("Error exporting XLS. See console for details.");
-      } finally {
-        exportBtn.disabled = false;
-        exportBtn.textContent = "Export XLS";
-      }
-    }
-
-    // ----- FORM SUBMIT (INPUT) -----
-
-    async function handleSubmit(e) {
-      e.preventDefault();
-      clearMessage();
-
-      const date = document.getElementById('date').value.trim();
-      const eventName = document.getElementById('eventName').value.trim();
-      const city = document.getElementById('city').value.trim();
-      const country = document.getElementById('country').value.trim();
-      const distance = document.getElementById('distance').value;
-      const time = document.getElementById('time').value.trim();
-
-      const payload = {
-        date,
-        event_name: eventName,
-        city,
-        country,
-        distance_label: distance,
-        time_str: time
-      };
-
-      console.log('Saving race payload:', payload);
-
-      if (saveBtn) saveBtn.disabled = true;
-
-      try {
-        const response = await fetch(`${API_BASE}/api/races`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-          const errData = await response.json().catch(() => ({}));
-          throw new Error(errData.error || 'Failed to save race.');
+          await loadRaces();
+        } catch (err) {
+          console.error("Erro ao excluir corrida:", err);
+          alert("Erro ao excluir corrida (ver console).");
         }
-
-        showMessage('Race saved successfully!');
-        form.reset();
-        document.getElementById('distance').value = '';
-
-        await loadRaces();
-      } catch (err) {
-        showMessage(err.message, true);
-        console.error(err);
-      } finally {
-        if (saveBtn) saveBtn.disabled = false;
       }
-    }
 
-function setupSorting() {
-  const headers = document.querySelectorAll('th[data-sort]');
-  headers.forEach(th => {
-    th.style.cursor = 'pointer';
-    th.addEventListener('click', () => {
-      const key = th.getAttribute('data-sort');
-      if (sortConfig.key === key) {
-        // alterna asc/desc na mesma coluna
-        sortConfig.direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
-      } else {
-        // nova coluna: começa em asc
-        sortConfig.key = key;
-        sortConfig.direction = 'asc';
+      // ----- EXPORT XLS -----
+
+      async function exportToXls() {
+        if (!exportBtn) return;
+
+        exportBtn.disabled = true;
+        exportBtn.textContent = "Exporting...";
+
+        try {
+          const response = await fetch(`${API_BASE}/api/races`);
+          if (!response.ok) {
+            throw new Error("Failed to fetch races for export");
+          }
+          const data = await response.json();
+
+          if (!data || data.length === 0) {
+            alert("No races to export.");
+            return;
+          }
+
+          const header = ["Date", "Event Name", "City", "Country", "Distance", "Time", "Pace (min/km)"];
+
+          const rows = [];
+          rows.push(header);
+
+          data.forEach((race) => {
+            const pace = paceFrom(race.time_str, race.distance_label) || "";
+            rows.push([race.date, race.event_name, race.city, race.country, race.distance_label, race.time_str, pace]);
+          });
+
+          const lines = rows.map((cols) =>
+            cols
+              .map((value) => {
+                const v = value == null ? "" : String(value);
+                const escaped = v.replace(/"/g, '""');
+                return `"${escaped}"`;
+              })
+              .join(";")
+          );
+
+          const csvContent = lines.join("\r\n");
+
+          const blob = new Blob([csvContent], {
+            type: "application/vnd.ms-excel;charset=utf-8;"
+          });
+
+          const url = URL.createObjectURL(blob);
+
+          const a = document.createElement("a");
+          const now = new Date();
+          const yyyy = now.getFullYear();
+          const mm = String(now.getMonth() + 1).padStart(2, "0");
+          const dd = String(now.getDate()).padStart(2, "0");
+          const hh = String(now.getHours()).padStart(2, "0");
+          const min = String(now.getMinutes()).padStart(2, "0");
+
+          a.href = url;
+          a.download = `race-ranking-${yyyy}${mm}${dd}-${hh}${min}.xls`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        } catch (err) {
+          console.error("Error exporting XLS:", err);
+          alert("Error exporting XLS. See console for details.");
+        } finally {
+          exportBtn.disabled = false;
+          exportBtn.textContent = "Export XLS";
+        }
       }
-      applySortAndRender();
-    });
-  });
-}
 
+      // ----- FORM SUBMIT (INPUT) -----
 
-    
-    // ----- EVENT LISTENERS & INITIAL LOAD -----
+      async function handleSubmit(e) {
+        e.preventDefault();
+        clearMessage();
 
-    if (form) {
-      form.addEventListener('submit', handleSubmit);
-    }
+        const date = document.getElementById("date").value.trim();
+        const eventName = document.getElementById("eventName").value.trim();
+        const city = document.getElementById("city").value.trim();
+        const country = document.getElementById("country").value.trim();
+        const distance = document.getElementById("distance").value;
+        const time = document.getElementById("time").value.trim();
 
-    if (exportBtn) {
-      exportBtn.addEventListener("click", exportToXls);
-    }
+        const payload = {
+          date,
+          event_name: eventName,
+          city,
+          country,
+          distance_label: distance,
+          time_str: time
+        };
 
-if (toggleInputBtn && inputContent) {
-  toggleInputBtn.addEventListener('click', () => {
-    const isCollapsed = inputContent.classList.toggle('collapsed');
-    toggleInputBtn.textContent = isCollapsed ? 'Add Race' : 'Hide Form';
-  });
-}
-    
-    setupSorting();
-loadRaces();
+        console.log("Saving race payload:", payload);
 
-  </script>
-</body>
+        if (saveBtn) saveBtn.disabled = true;
+
+        try {
+          const response = await fetch(`${API_BASE}/api/races`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+
+          if (!response.ok) {
+            const errData = await response.json().catch(() => ({}));
+            throw new Error(errData.error || "Failed to save race.");
+          }
+
+          showMessage("Race saved successfully!");
+          form.reset();
+          document.getElementById("distance").value = "";
+
+          await loadRaces();
+        } catch (err) {
+          showMessage(err.message, true);
+          console.error(err);
+        } finally {
+          if (saveBtn) saveBtn.disabled = false;
+        }
+      }
+
+      function setupSorting() {
+        const headers = document.querySelectorAll("th[data-sort]");
+        headers.forEach((th) => {
+          th.style.cursor = "pointer";
+          th.addEventListener("click", () => {
+            const key = th.getAttribute("data-sort");
+            if (sortConfig.key === key) {
+              // alterna asc/desc na mesma coluna
+              sortConfig.direction = sortConfig.direction === "asc" ? "desc" : "asc";
+            } else {
+              // nova coluna: começa em asc
+              sortConfig.key = key;
+              sortConfig.direction = "asc";
+            }
+            applySortAndRender();
+          });
+        });
+      }
+
+      // ----- EVENT LISTENERS & INITIAL LOAD -----
+
+      if (form) {
+        form.addEventListener("submit", handleSubmit);
+      }
+
+      if (exportBtn) {
+        exportBtn.addEventListener("click", exportToXls);
+      }
+
+      if (toggleInputBtn && inputContent) {
+        toggleInputBtn.addEventListener("click", () => {
+          const isCollapsed = inputContent.classList.toggle("collapsed");
+          toggleInputBtn.textContent = isCollapsed ? "+ New Race" : "Close Form";
+        });
+      }
+
+      setupSorting();
+      loadRaces();
+    </script>
+  </body>
 </html>
