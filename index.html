@@ -59,7 +59,6 @@
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
         max-width: 900px;
         margin: 0 auto 20px auto;
-        overflow: auto;
       }
 
       .profile-top {
@@ -128,7 +127,6 @@ justify-content: space-evenly;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
         max-width: 900px;
         margin: 0 auto 30px auto;
-        overflow: auto;
       }
 
       .section-header {
@@ -260,6 +258,13 @@ td .btn-delete {
         text-align: center;
       }
 
+      
+      .table-wrapper {
+  width: 100%;
+  overflow-x: auto;   /* só a tabela dentro desse wrapper vai rolar */
+}
+
+      
       /* ----- ACTIONS BAR & BUTTONS ----- */
 
       .actions-bar {
@@ -309,6 +314,7 @@ td .btn-delete {
         </div>
       </div>
 
+      <div class="table-wrapper">
       <div class="profile-bottom">
         <div class="profile-card">
           <div class="profile-card-label">Location:</div>
@@ -331,12 +337,14 @@ td .btn-delete {
           <div class="profile-card-value">-</div>
         </div>
       </div>
+        </div>
     </div>
 
     <!-- ============= PERSONAL BESTS SECTION ============= -->
     <div class="section" id="pbs-section">
       <h2>PERSONAL BESTS</h2>
 
+      <div class="table-wrapper">
       <table>
         <thead>
           <tr>
@@ -354,6 +362,7 @@ td .btn-delete {
         </tbody>
       </table>
     </div>
+      </div>
 
     <!-- ============= INPUT SECTION ============= -->
     <div class="section" id="input-section">
@@ -399,6 +408,7 @@ td .btn-delete {
     <div class="section" id="results-section">
       <h2>RESULTS</h2>
 
+      <div class="table-wrapper">
       <table>
         <thead>
           <tr>
@@ -417,6 +427,7 @@ td .btn-delete {
           <!-- Filled dynamically -->
         </tbody>
       </table>
+        </div>
       <br />
       <div class="actions-bar">
         <button id="export-btn" class="btn btn-export">Export XLS</button>
